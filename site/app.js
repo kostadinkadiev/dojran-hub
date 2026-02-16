@@ -1,5 +1,5 @@
 const newsContainer = document.querySelector('#news-list');
-const featuredContainer = document.querySelector('#news-featured');
+// removed featured section
 const updatedEl = document.querySelector('#news-updated');
 const sourcesList = document.querySelector('#sources-list');
 
@@ -19,26 +19,12 @@ const loadNews = async () => {
     const items = data.items || [];
     if (!items.length) {
       newsContainer.innerHTML = '<p class="muted">No news at the moment.</p>';
-      featuredContainer.innerHTML = '';
       return;
     }
 
-    const score = (item) => {
-      const title = item.title.toLowerCase();
-      let s = 0;
-      if (title.includes('dojran') || title.includes('дојран')) s += 3;
-      if (title.includes('lake') || title.includes('езеро')) s += 2;
-      if (title.includes('tour') || title.includes('тур')) s += 1;
-      if (item.source.toLowerCase().includes('municipality') || item.source.toLowerCase().includes('општина')) s += 2;
-      return s;
-    };
-
-    const sorted = [...items].sort((a, b) => score(b) - score(a));
-    const featured = sorted.slice(0, 6);
-    const rest = items.filter((item) => !featured.some((f) => f.url === item.url));
-
     const renderCard = (item) => {
       const date = item.date ? `<span class="date">${fmtDate(item.date)}</span>` : '';
+      const summary = item.summary ? `<p class="summary">${item.summary}</p>` : '';
       return `
         <article class="card">
           <a href="${item.url}" target="_blank" rel="noopener noreferrer">
@@ -48,12 +34,12 @@ const loadNews = async () => {
             <span>${item.source}</span>
             ${date}
           </div>
+          ${summary}
         </article>
       `;
     };
 
-    featuredContainer.innerHTML = featured.map(renderCard).join('') || '<p class="muted">No featured news.</p>';
-    newsContainer.innerHTML = rest.map(renderCard).join('') || '<p class="muted">No other news.</p>';
+    newsContainer.innerHTML = items.map(renderCard).join('');
   } catch (err) {
     newsContainer.innerHTML = `<p class="muted">${err.message}</p>`;
   }

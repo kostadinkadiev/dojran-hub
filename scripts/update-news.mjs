@@ -20,6 +20,12 @@ const uniqBy = (items, keyFn) => {
 };
 
 const normalize = (text = '') => text.replace(/\s+/g, ' ').trim();
+const stripHtml = (html = '') => normalize(html.replace(/<[^>]*>/g, ' '));
+const parseDate = (value) => {
+  if (!value) return null;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+};
 
 const fetchText = async (url) => {
   const res = await fetch(url, {
@@ -45,10 +51,12 @@ const parseRss = async (source) => {
       const title = normalize(item.title?.['#text'] ?? item.title);
       const link = item.link?.['@_href'] ?? item.link;
       const pubDate = item.pubDate ?? item.updated ?? item.published;
+      const summary = stripHtml(item.description ?? item.summary ?? item['content:encoded'] ?? '');
       return {
         title,
         url: link,
         date: pubDate ? new Date(pubDate).toISOString() : null,
+        summary,
         source: source.name
       };
     })
@@ -58,20 +66,48 @@ const parseRss = async (source) => {
 const parseTimeMk = async (source) => {
   const html = await fetchText(source.url);
   const $ = load(html);
-  const items = [];
+  const links = [];
   $('a[href^="http"]').each((_, el) => {
     const href = $(el).attr('href');
     const title = normalize($(el).text());
     if (!title) return;
     if (!/dojran|дојран/i.test(title)) return;
-    items.push({
-      title,
-      url: href,
-      date: null,
-      source: source.name
-    });
+    links.push({ title, url: href });
   });
-  return uniqBy(items, (item) => item.url).slice(0, 20);
+
+  const unique = uniqBy(links, (item) => item.url).slice(0, 12);
+  const results = [];
+
+  for (const item of unique) {
+    try {
+      const pageHtml = await fetchText(item.url);
+      const $$ = load(pageHtml);
+      const summary = normalize(
+        $$('meta[name="description"]').attr('content') ||
+        $$('meta[property="og:description"]').attr('content') ||
+        ''
+      );
+      const dateVal =
+        $$('meta[property="article:published_time"]').attr('content') ||
+        $$('meta[name="date"]').attr('content') ||
+        $$('time[datetime]').attr('datetime');
+      const date = parseDate(dateVal);
+
+      if (!date) continue;
+
+      results.push({
+        title: item.title,
+        url: item.url,
+        date: date.toISOString(),
+        summary,
+        source: source.name
+      });
+    } catch {
+      continue;
+    }
+  }
+
+  return results;
 };
 
 const parseHtml = async (source) => {
@@ -98,12 +134,17 @@ const collect = async () => {
     }
   }
 
+  const now = new Date();
+  const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
   const cleaned = uniqBy(all, (item) => item.url)
-    .sort((a, b) => {
-      const ad = a.date ? new Date(a.date).getTime() : 0;
-      const bd = b.date ? new Date(b.date).getTime() : 0;
-      return bd - ad;
-    })
+    .filter((item) => item.date)
+    .filter((item) => new Date(item.date) >= weekAgo)
+    .map((item) => ({
+      ...item,
+      summary: item.summary ? item.summary.split('. ').slice(0, 2).join('. ') + (item.summary.includes('.') ? '.' : '') : ''
+    }))
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 50);
 
   await fs.mkdir(path.dirname(outPath), { recursive: true });
