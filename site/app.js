@@ -1,4 +1,5 @@
 const newsContainer = document.querySelector('#news-list');
+const featuredContainer = document.querySelector('#news-featured');
 const updatedEl = document.querySelector('#news-updated');
 const sourcesList = document.querySelector('#sources-list');
 
@@ -18,10 +19,25 @@ const loadNews = async () => {
     const items = data.items || [];
     if (!items.length) {
       newsContainer.innerHTML = '<p class="muted">Нема новости во моментов.</p>';
+      featuredContainer.innerHTML = '';
       return;
     }
 
-    newsContainer.innerHTML = items.map((item) => {
+    const score = (item) => {
+      const title = item.title.toLowerCase();
+      let s = 0;
+      if (title.includes('дојран')) s += 3;
+      if (title.includes('езеро')) s += 2;
+      if (title.includes('тур')) s += 1;
+      if (item.source.toLowerCase().includes('општина')) s += 2;
+      return s;
+    };
+
+    const sorted = [...items].sort((a, b) => score(b) - score(a));
+    const featured = sorted.slice(0, 6);
+    const rest = items.filter((item) => !featured.some((f) => f.url === item.url));
+
+    const renderCard = (item) => {
       const date = item.date ? `<span class="date">${fmtDate(item.date)}</span>` : '';
       return `
         <article class="card">
@@ -34,7 +50,10 @@ const loadNews = async () => {
           </div>
         </article>
       `;
-    }).join('');
+    };
+
+    featuredContainer.innerHTML = featured.map(renderCard).join('') || '<p class="muted">Нема избрани вести.</p>';
+    newsContainer.innerHTML = rest.map(renderCard).join('') || '<p class="muted">Нема други вести.</p>';
   } catch (err) {
     newsContainer.innerHTML = `<p class="muted">${err.message}</p>`;
   }
