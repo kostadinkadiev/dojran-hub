@@ -171,6 +171,11 @@ const collect = async () => {
     }))
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
+    const topicRules = [
+    { key: 'birds', re: /птиц|галеб|корморан|лиски/i },
+    { key: 'pump', re: /пумп|колектор/i }
+  ];
+
   const deduped = [];
   for (const item of cleaned) {
     const match = deduped.find((existing) => {
@@ -179,6 +184,18 @@ const collect = async () => {
       return titleSim >= 0.6 || summarySim >= 0.6;
     });
     if (match) continue;
+
+    const topic = topicRules.find((rule) => rule.re.test(item.title) || rule.re.test(item.summary || ''));
+    if (topic) {
+      const hasTopic = deduped.find((existing) => {
+        const sameTopic = topic.re.test(existing.title) || topic.re.test(existing.summary || '');
+        if (!sameTopic) return false;
+        const dateGap = Math.abs(new Date(existing.date).getTime() - new Date(item.date).getTime());
+        return dateGap <= 3 * 24 * 60 * 60 * 1000;
+      });
+      if (hasTopic) continue;
+    }
+
     deduped.push(item);
   }
 
