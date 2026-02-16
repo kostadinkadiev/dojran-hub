@@ -43,6 +43,34 @@ a:hover {
   border-bottom: 1px solid var(--border);
 }
 
+.topnav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.topnav .logo {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.nav-links {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.nav-links a {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.nav-links a:hover {
+  color: var(--accent);
+}
+
 .hero h1 {
   margin: 0 0 12px;
   font-size: clamp(2.2rem, 5vw, 3.4rem);

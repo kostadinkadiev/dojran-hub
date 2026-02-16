@@ -6,7 +6,7 @@ const sourcesList = document.querySelector('#sources-list');
 const fmtDate = (iso) => {
   if (!iso) return '';
   const d = new Date(iso);
-  return d.toLocaleDateString('mk-MK', { year: 'numeric', month: 'short', day: 'numeric' });
+  return d.toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: 'numeric' });
 };
 
 const loadNews = async () => {
@@ -14,11 +14,11 @@ const loadNews = async () => {
     const res = await fetch('./data/news.json', { cache: 'no-store' });
     if (!res.ok) throw new Error('Неуспешно вчитување на новости.');
     const data = await res.json();
-    updatedEl.textContent = `Освежено: ${fmtDate(data.lastUpdated)}`;
+    updatedEl.textContent = `Updated: ${fmtDate(data.lastUpdated)}`;
 
     const items = data.items || [];
     if (!items.length) {
-      newsContainer.innerHTML = '<p class="muted">Нема новости во моментов.</p>';
+      newsContainer.innerHTML = '<p class="muted">No news at the moment.</p>';
       featuredContainer.innerHTML = '';
       return;
     }
@@ -26,10 +26,10 @@ const loadNews = async () => {
     const score = (item) => {
       const title = item.title.toLowerCase();
       let s = 0;
-      if (title.includes('дојран')) s += 3;
-      if (title.includes('езеро')) s += 2;
-      if (title.includes('тур')) s += 1;
-      if (item.source.toLowerCase().includes('општина')) s += 2;
+      if (title.includes('dojran') || title.includes('дојран')) s += 3;
+      if (title.includes('lake') || title.includes('езеро')) s += 2;
+      if (title.includes('tour') || title.includes('тур')) s += 1;
+      if (item.source.toLowerCase().includes('municipality') || item.source.toLowerCase().includes('општина')) s += 2;
       return s;
     };
 
@@ -52,8 +52,8 @@ const loadNews = async () => {
       `;
     };
 
-    featuredContainer.innerHTML = featured.map(renderCard).join('') || '<p class="muted">Нема избрани вести.</p>';
-    newsContainer.innerHTML = rest.map(renderCard).join('') || '<p class="muted">Нема други вести.</p>';
+    featuredContainer.innerHTML = featured.map(renderCard).join('') || '<p class="muted">No featured news.</p>';
+    newsContainer.innerHTML = rest.map(renderCard).join('') || '<p class="muted">No other news.</p>';
   } catch (err) {
     newsContainer.innerHTML = `<p class="muted">${err.message}</p>`;
   }
@@ -72,16 +72,16 @@ const loadSources = async () => {
 
     sourcesList.innerHTML = `
       <div>
-        <h4>Извори за вести</h4>
+        <h4>News sources</h4>
         <ul>${render(data.news)}</ul>
       </div>
       <div>
-        <h4>Други извори</h4>
+        <h4>Other sources</h4>
         <ul>${render(data.other)}</ul>
       </div>
     `;
   } catch (err) {
-    sourcesList.innerHTML = '<p class="muted">Неуспешно вчитување на извори.</p>';
+    sourcesList.innerHTML = '<p class="muted">Failed to load sources.</p>';
   }
 };
 
