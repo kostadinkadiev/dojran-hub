@@ -19,6 +19,11 @@ const uniqBy = (items, keyFn) => {
   });
 };
 
+const slug = (text = '') => normalize(text)
+  .toLowerCase()
+  .replace(/[^a-z0-9\u0400-\u04FF]+/g, ' ')
+  .trim();
+
 const normalize = (text = '') => text.replace(/\s+/g, ' ').trim();
 const stripHtml = (html = '') => normalize(html.replace(/<[^>]*>/g, ' '));
 const parseDate = (value) => {
@@ -144,15 +149,18 @@ const collect = async () => {
       ...item,
       summary: item.summary ? item.summary.split('. ').slice(0, 2).join('. ') + (item.summary.includes('.') ? '.' : '') : ''
     }))
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-    .slice(0, 50);
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+  const deduped = uniqBy(cleaned, (item) => slug(item.title));
+
+  const finalItems = deduped.slice(0, 50);
 
   await fs.mkdir(path.dirname(outPath), { recursive: true });
   await fs.writeFile(
     outPath,
     JSON.stringify({
       lastUpdated: new Date().toISOString(),
-      items: cleaned
+      items: finalItems
     }, null, 2)
   );
 };
