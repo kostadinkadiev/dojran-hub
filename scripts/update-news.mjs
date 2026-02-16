@@ -6,6 +6,7 @@ import path from 'path';
 const ROOT = path.resolve(process.cwd());
 const SOURCES_PATH = path.join(ROOT, 'scripts', 'sources.json');
 const outPath = path.join(ROOT, 'site', 'data', 'news.json');
+const digestPath = path.join(ROOT, 'site', 'data', 'digest.json');
 
 const sources = JSON.parse(await fs.readFile(SOURCES_PATH, 'utf-8'));
 
@@ -202,11 +203,27 @@ const collect = async () => {
   const finalItems = deduped.slice(0, 50);
 
   await fs.mkdir(path.dirname(outPath), { recursive: true });
+  const nowIso = new Date().toISOString();
+
   await fs.writeFile(
     outPath,
     JSON.stringify({
-      lastUpdated: new Date().toISOString(),
+      lastUpdated: nowIso,
       items: finalItems
+    }, null, 2)
+  );
+
+  const digestItems = finalItems.slice(0, 8).map((item) => ({
+    title: item.title,
+    url: item.url,
+    summary: item.summary || ''
+  }));
+
+  await fs.writeFile(
+    digestPath,
+    JSON.stringify({
+      lastUpdated: nowIso,
+      items: digestItems
     }, null, 2)
   );
 };
