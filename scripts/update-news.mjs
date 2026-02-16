@@ -24,6 +24,26 @@ const slug = (text = '') => normalize(text)
   .replace(/[^a-z0-9\u0400-\u04FF]+/g, ' ')
   .trim();
 
+const stopwords = new Set([
+  'the','and','for','with','from','that','this','are','was','were','has','have','had','not','its','but','about','into','over','after','before','more','less','new','old',
+  'на','во','за','со','од','тоа','овој','ова','тие','има','нема','и','но','кај','над','под','после','пред','повеќе','нов','стара','стар','се'
+]);
+
+const tokens = (text = '') => slug(text)
+  .split(' ')
+  .filter(Boolean)
+  .filter((t) => !stopwords.has(t));
+
+const similarity = (a, b) => {
+  const setA = new Set(tokens(a));
+  const setB = new Set(tokens(b));
+  if (!setA.size || !setB.size) return 0;
+  let inter = 0;
+  for (const t of setA) if (setB.has(t)) inter++;
+  const union = setA.size + setB.size - inter;
+  return inter / union;
+};
+
 const normalize = (text = '') => text.replace(/\s+/g, ' ').trim();
 const stripHtml = (html = '') => normalize(html.replace(/<[^>]*>/g, ' '));
 const parseDate = (value) => {
@@ -151,7 +171,12 @@ const collect = async () => {
     }))
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
-  const deduped = uniqBy(cleaned, (item) => slug(item.title));
+  const deduped = [];
+  for (const item of cleaned) {
+    const match = deduped.find((existing) => similarity(existing.title, item.title) >= 0.75);
+    if (match) continue;
+    deduped.push(item);
+  }
 
   const finalItems = deduped.slice(0, 50);
 
