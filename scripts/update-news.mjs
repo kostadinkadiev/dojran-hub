@@ -7,6 +7,7 @@ const ROOT = path.resolve(process.cwd());
 const SOURCES_PATH = path.join(ROOT, 'scripts', 'sources.json');
 const outPath = path.join(ROOT, 'site', 'data', 'news.json');
 const digestPath = path.join(ROOT, 'site', 'data', 'digest.json');
+const photosPath = path.join(ROOT, 'site', 'data', 'photos.json');
 
 const sources = JSON.parse(await fs.readFile(SOURCES_PATH, 'utf-8'));
 
@@ -213,11 +214,26 @@ const collect = async () => {
     }, null, 2)
   );
 
-  const digestItems = finalItems.slice(0, 8).map((item) => ({
-    title: item.title,
-    url: item.url,
-    summary: item.summary || ''
-  }));
+  let photos = [];
+  try {
+    const photoData = JSON.parse(await fs.readFile(photosPath, 'utf-8'));
+    photos = photoData.items || [];
+  } catch {
+    photos = [];
+  }
+
+  const digestItems = finalItems.slice(0, 8).map((item, idx) => {
+    const photo = photos.length ? photos[idx % photos.length] : null;
+    return {
+      title: item.title,
+      url: item.url,
+      summary: item.summary || '',
+      image: photo?.url || null,
+      imageTitle: photo?.title || null,
+      credit: photo?.credit || null,
+      creditUrl: photo?.creditUrl || null
+    };
+  });
 
   await fs.writeFile(
     digestPath,

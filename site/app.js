@@ -2,12 +2,6 @@ const sourcesList = document.querySelector('#sources-list');
 const digestContainer = document.querySelector('#digest-list');
 const reelsContainer = document.querySelector('#reels-list');
 
-const fmtDate = (iso) => {
-  if (!iso) return '';
-  const d = new Date(iso);
-  return d.toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: 'numeric' });
-};
-
 const loadDigest = async () => {
   try {
     const res = await fetch('./data/digest.json', { cache: 'no-store' });
@@ -17,6 +11,12 @@ const loadDigest = async () => {
     digestContainer.innerHTML = items.length
       ? items.map((item) => `
         <article class="card">
+          ${item.image ? `
+            <div class="media">
+              <img src="${item.image}" alt="${item.imageTitle || 'Dojran'}" loading="lazy" />
+              ${item.creditUrl ? `<a class="credit" href="${item.creditUrl}" target="_blank" rel="noopener noreferrer">${item.credit}</a>` : ''}
+            </div>
+          ` : ''}
           <a href="${item.url}" target="_blank" rel="noopener noreferrer">
             <h3>${item.title}</h3>
           </a>
