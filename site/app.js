@@ -1,5 +1,3 @@
-const newsContainer = document.querySelector('#news-list');
-const updatedEl = document.querySelector('#news-updated');
 const sourcesList = document.querySelector('#sources-list');
 const digestContainer = document.querySelector('#digest-list');
 const reelsContainer = document.querySelector('#reels-list');
@@ -8,42 +6,6 @@ const fmtDate = (iso) => {
   if (!iso) return '';
   const d = new Date(iso);
   return d.toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: 'numeric' });
-};
-
-const renderCard = (item) => {
-  const date = item.date ? `<span class="date">${fmtDate(item.date)}</span>` : '';
-  const summary = item.summary ? `<p class="summary">${item.summary}</p>` : '';
-  return `
-    <article class="card">
-      <a href="${item.url}" target="_blank" rel="noopener noreferrer">
-        <h3>${item.title}</h3>
-      </a>
-      <div class="meta">
-        <span>${item.source}</span>
-        ${date}
-      </div>
-      ${summary}
-    </article>
-  `;
-};
-
-const loadNews = async () => {
-  try {
-    const res = await fetch('./data/news.json', { cache: 'no-store' });
-    if (!res.ok) throw new Error('Failed to load news.');
-    const data = await res.json();
-    updatedEl.textContent = `Updated: ${fmtDate(data.lastUpdated)}`;
-
-    const items = data.items || [];
-    if (!items.length) {
-      newsContainer.innerHTML = '<p class="muted">No news at the moment.</p>';
-      return;
-    }
-
-    newsContainer.innerHTML = items.map(renderCard).join('');
-  } catch (err) {
-    newsContainer.innerHTML = `<p class="muted">${err.message}</p>`;
-  }
 };
 
 const loadDigest = async () => {
@@ -114,7 +76,6 @@ const loadSources = async () => {
   }
 };
 
-loadNews();
 loadDigest();
 loadReels();
 loadSources();
