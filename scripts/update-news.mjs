@@ -173,7 +173,11 @@ const collect = async () => {
 
   const deduped = [];
   for (const item of cleaned) {
-    const match = deduped.find((existing) => similarity(existing.title, item.title) >= 0.75);
+    const match = deduped.find((existing) => {
+      const titleSim = similarity(existing.title, item.title);
+      const summarySim = existing.summary && item.summary ? similarity(existing.summary, item.summary) : 0;
+      return titleSim >= 0.6 || summarySim >= 0.6;
+    });
     if (match) continue;
     deduped.push(item);
   }
