@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="mk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Дојран – Инфо Центар</title>
+  <meta name="description" content="Еден визуелен преглед на вести, сместување и корисни информации за Дојран." />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="hero">
+    <div class="container">
+      <span class="tagline">
+        <strong>Дојран – Инфо Центар</strong>
+        <span>Вести • Сместување • Места</span>
+      </span>
+      <h1>Сè за Дојран, на едно место.</h1>
+      <p>Агрегирани вести, сместувања и корисни линкови за локални жители и посетители. Фокус на чист, темен дизајн и брз пристап од мобилен.</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="section" id="news">
+      <h2>Новости</h2>
+      <p class="lead">Агрегирани вести од избрани извори со фокус на Дојран.</p>
+      <div class="badge" id="news-updated"></div>
+      <div class="grid" id="news-list">
+        <p class="muted">Се вчитуваат новости…</p>
+      </div>
+    </section>
+
+    <section class="section" id="accommodation">
+      <h2>Сместување</h2>
+      <p class="lead">Брз пристап до сместувања во Дојран. За live податоци од Booking/Airbnb ќе треба партнерски API (можеме да го додадеме подоцна).</p>
+      <div class="grid">
+        <article class="card">
+          <h3>Booking.com – Дојран</h3>
+          <p class="muted">Пребарај сместувања и датуми.</p>
+          <a href="https://www.booking.com/searchresults.html?ss=Dojran" target="_blank" rel="noopener noreferrer">Отвори пребарување →</a>
+        </article>
+        <article class="card">
+          <h3>Airbnb – Дојран</h3>
+          <p class="muted">Приватни апартмани и куќи за одмор.</p>
+          <a href="https://www.airbnb.com/s/Dojran--North-Macedonia/homes" target="_blank" rel="noopener noreferrer">Отвори пребарување →</a>
+        </article>
+        <article class="card">
+          <h3>Kajak.mk – Дојрански регион</h3>
+          <p class="muted">Листа на сместувања од локален агрегатор.</p>
+          <a href="https://kajak.mk/smestuvanja/586fa8f0-dojranski-region" target="_blank" rel="noopener noreferrer">Отвори листа →</a>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="about">
+      <h2>За Дојран</h2>
+      <div class="two-col">
+        <div class="card">
+          <h3>Дојранско Езеро</h3>
+          <p class="muted">Познато по традиционалниот риболов и мирната атмосфера. Идеално за прошетки покрај езерото и залезите над водата.</p>
+        </div>
+        <div class="card">
+          <h3>Стара и Нова Дојран</h3>
+          <p class="muted">Старинско јадро со културни слоеви и современи туристички содржини. Одлична база за одмор и викенд-патувања.</p>
+        </div>
+        <div class="card">
+          <h3>Култура и историја</h3>
+          <p class="muted">Историски, градот претрпел значителни разурнувања во Првата светска војна, но денес се обновува како туристичка дестинација.</p>
+        </div>
+        <div class="card">
+          <h3>Што да посетиш</h3>
+          <p class="muted">Променадата, локалните музеи, термални извори и традиционалните ресторани се меѓу главните атракции.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="sources">
+      <h2>Извори и линкови</h2>
+      <p class="lead">Листата на извори што ги користиме за вести и дополнителни информации.</p>
+      <div class="two-col" id="sources-list">
+        <p class="muted">Се вчитуваат извори…</p>
+      </div>
+    </section>
+
+    <section class="section" id="community">
+      <h2>Локални страници</h2>
+      <p class="lead">Социјални страници и групи (за почеток, само линкови — интеграција ќе бара дозволи/API).</p>
+      <div class="grid">
+        <article class="card">
+          <h3>Facebook група: Дојран</h3>
+          <a href="https://facebook.com/groups/257917960994041/" target="_blank" rel="noopener noreferrer">Отвори група →</a>
+        </article>
+        <article class="card">
+          <h3>Fuk Tak Dojran</h3>
+          <a href="https://www.facebook.com/FukTakDojran" target="_blank" rel="noopener noreferrer">Отвори страница →</a>
+        </article>
+        <article class="card">
+          <h3>Hotel Romantique Dojran</h3>
+          <a href="https://www.facebook.com/HotelRomantiqueDojrant" target="_blank" rel="noopener noreferrer">Отвори страница →</a>
+        </article>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p>Ова е независен локален проект за промоција на Дојран. Контакт и сугестии: <a href="mailto:dojran.info@proton.me">dojran.info@proton.me</a> (пример — ќе го смениме кога ќе избереш).</p>
+    </footer>
+  </main>
+
+  <script src="./app.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+{
+  "news": [
+    {
+      "name": "Time.mk (пребарување: Дојран)",
+      "url": "https://time.mk/?q=Dojran&search=news&m=1"
+    },
+    {
+      "name": "Општина Дојран (RSS)",
+      "url": "https://dojran.gov.mk/feed/"
+    }
+  ],
+  "other": [
+    {
+      "name": "Општина Дојран",
+      "url": "https://dojran.gov.mk/"
+    },
+    {
+      "name": "Macedonia Timeless – Дојран",
+      "url": "https://macedonia-timeless.com/mk/cities_and_regions/cities/dojran/"
+    },
+    {
+      "name": "Macedonia Tourism – Дојран",
+      "url": "https://macedoniatourism.com/city/dojran/"
+    },
+    {
+      "name": "Kajak.mk – Сместувања (Дојрански регион)",
+      "url": "https://kajak.mk/smestuvanja/586fa8f0-dojranski-region"
+    }
+  ]
+}
